@@ -1,0 +1,4 @@
+{
+  "watch": ["public/inspop-data.csv"],
+  "exec": "node auto-build-wallpaper-dir-info.js"
+}
