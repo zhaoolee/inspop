@@ -6,7 +6,8 @@
 
 在线Web体验版: https://inspop.fangyuanxiaozhan.com/
 
-Chrome扩展程序版: [inspop-extension-release.zip](https://github.com/zhaoolee/inspop/raw/master/inspop-extension-release.zip)
+Chrome扩展程序版: [inspop-extension-release.zip](https://github.com/zhaoolee/inspop/raw/main/inspop-extension-release.zip)
+
 
 
 ## 如何安装扩展程序
