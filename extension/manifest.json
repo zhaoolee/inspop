@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "InsPop",
     "description": "播放电影台词海报",
-    "version": "1.0",
+    "version": "1.0.1",
     "permissions": ["tabs"],
     "optional_host_permissions": [
         "https://*/*"

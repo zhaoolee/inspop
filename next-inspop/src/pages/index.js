@@ -57,7 +57,7 @@ const FullScreenImage = ({ imageUrl, onColorExtracted }) => {
   }, [imageUrl, onColorExtracted]);
   return (
     <>
-      <img ref={imgRef} src={imageUrl} style={{ display: "none" }} />
+      <img ref={imgRef} src={imageUrl} style={{ display: "none" }} crossOrigin="anonymous" />
       <div
         className={styles.fullScreenImage}
         style={{ backgroundImage: `url('${imageUrl}')` }}
