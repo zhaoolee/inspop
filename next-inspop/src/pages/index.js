@@ -13,6 +13,7 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
+import Head from 'next/head'
 
 function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -254,6 +255,10 @@ export default function Home({ csvData, wallpapersInfoJson, env }) {
 
   return (
     <div className={styles.main}>
+
+      <Head>
+      {newCSVItem && <title>{newCSVItem.en_source}</title>}
+      </Head>
       <FullScreenImage
         imageUrl={backgroundImageUrl}
         onColorExtracted={setImageColor}
