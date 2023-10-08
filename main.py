@@ -38,7 +38,7 @@ def main():
 
 
     for index, row in inspop_data_csv_data.iloc[::-1].iterrows():
-        insert_info = insert_info + row.en_content + '/' + row.cn_content + ' | ' + row.en_source + row.cn_source + '\n\n'
+        insert_info = insert_info + "🌈 " + row.en_content + ' / ' + row.cn_content + ' | ' + row.en_source + row.cn_source + '\n\n'
 
     insert_info = "---start---\n## 目录(" + f"目前收录{len(inspop_data_csv_data)}条，" + time.strftime('%Y年%m月%d日') + "更新)\n\n" + insert_info + "\n" + "---end---"
     insert_index_info_in_readme(insert_info)
