@@ -1,4 +1,5 @@
 {
   "watch": ["public/inspop-data.csv"],
-  "exec": "node auto-build-wallpaper-dir-info.js"
+  "exec": "node auto-build-wallpaper-dir-info.js",
+  "delay": 2500
 }
