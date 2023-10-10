@@ -2,11 +2,10 @@ import os
 import pandas as pd
 import re
 import time
-
+import json
+from urllib.parse import quote
 
 def insert_index_info_in_readme(insert_info):
-
-
 
     # 获取README.md内容
     with open (os.path.join(os.getcwd(), "README.md"), 'r', encoding='utf-8') as f:
@@ -34,11 +33,28 @@ def main():
     print(inspop_data_csv_data)
     print('len==', len(inspop_data_csv_data))
 
-    insert_info = ''
+    insert_info = '| en_content | cn_content | 发音 | \n | --- | --- | --- |\n'
 
-
+    av_info_json_path =  os.path.join(current_path, 'next-inspop', 'public', 'av-info.json')
+    av_info_json = {}
+    # 打开JSON文件
+    with open(av_info_json_path, 'r') as f:
+        # 读取并解析JSON数据
+        av_info_json = json.load(f)
+    print('==av_info_json', av_info_json)
     for index, row in inspop_data_csv_data.iloc[::-1].iterrows():
-        insert_info = insert_info + "🌈 " + row.en_content + ' / ' + row.cn_content + ' | ' + row.en_source + row.cn_source + '\n\n'
+        https_audio_info =  ''
+        if(pd.isnull(row.av_dir) == False):
+            print('===', row.av_dir)
+            audio_name = av_info_json[row.av_dir]['audio']
+            https_audio_info = 'https://inspop.fangyuanxiaozhan.com/av/' + row.av_dir + '/' + audio_name
+            https_audio_info = quote(https_audio_info, safe=':/') 
+            print('https_audio_info==', https_audio_info)
+
+        if(len(https_audio_info) > 0):
+            insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
+        else:
+            insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | 待补充 | ' + '\n'
 
     insert_info = "---start---\n## 目录(" + f"目前收录{len(inspop_data_csv_data)}条，" + time.strftime('%Y年%m月%d日') + "更新)\n\n" + insert_info + "\n" + "---end---"
     insert_index_info_in_readme(insert_info)
