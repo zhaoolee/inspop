@@ -10,5 +10,21 @@
   "IronMan2AndThereWillBe": {
     "audio": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_00_39_35_216-00_39_48_521.mp3",
     "video": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_00_39_35_216-00_39_48_521.mp4"
+  },
+  "IronMan2ItISCompletelyElegant": {
+    "audio": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_01_12_18_429-01_12_29_27.mp3",
+    "video": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_01_12_18_429-01_12_29_27.mp4"
+  },
+  "IronMan2IfITWereAnySmarter": {
+    "audio": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_01_12_05_500-01_12_13_549.mp3",
+    "video": "Iron Man 2 (2010) [imdbid-tt1228705] - 1080p_01_12_05_500-01_12_13_549.mp4"
+  },
+  "IronMan3SoIfIWereTo": {
+    "audio": "Iron Man 3 (2013) [imdbid-tt1300854] - 1080p_01_58_59_438-01_59_39_121.mp3",
+    "video": "Iron Man 3 (2013) [imdbid-tt1300854] - 1080p_01_58_59_438-01_59_39_121.mp4"
+  },
+  "IronMan3GodsAliensOtherDimensions": {
+    "audio": "Iron Man 3 (2013) [imdbid-tt1300854] - 1080p_00_21_40_64-00_21_48_164.mp3",
+    "video": "Iron Man 3 (2013) [imdbid-tt1300854] - 1080p_00_21_40_64-00_21_48_164.mp4"
   }
 }
