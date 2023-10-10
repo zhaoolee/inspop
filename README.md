@@ -127,7 +127,7 @@ Chrome扩展程序版下载: [inspop-extension-release.zip](https://github.com/z
 
 ## 支持播放原音(资源补充中)
 
-![](./play.jpg)
+![](./README/play.jpg)
 
 剪辑脚本 [get_voice_video.sh](https://github.com/zhaoolee/inspop/blob/main/get_voice_video.sh)
 
