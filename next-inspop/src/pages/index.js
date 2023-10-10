@@ -16,10 +16,17 @@ import MenuItem from "@mui/material/MenuItem";
 import Head from "next/head";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
+let Swiper;
+let SwiperSlide;
+let SwiperCore;
+let Pagination;
+let Autoplay;
+let EffectFade;
+
 function AudioPlayer({ currentAudio, backgroundColorForContent }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef(null);
- 
+
   const togglePlayPause = () => {
     if (playing) {
       audioRef.current.pause();
@@ -36,13 +43,13 @@ function AudioPlayer({ currentAudio, backgroundColorForContent }) {
     };
 
     if (audioRef.current) {
-      audioRef.current.addEventListener('ended', handleAudioEnd);
+      audioRef.current.addEventListener("ended", handleAudioEnd);
     }
 
     // 在组件卸载时移除事件监听器，并停止音频播放
     return () => {
       if (audioRef.current) {
-        audioRef.current.removeEventListener('ended', handleAudioEnd);
+        audioRef.current.removeEventListener("ended", handleAudioEnd);
         audioRef.current.pause();
       }
     };
@@ -55,7 +62,6 @@ function AudioPlayer({ currentAudio, backgroundColorForContent }) {
     }
   }, [currentAudio]);
 
-
   return (
     <>
       <audio ref={audioRef} preload="auto" />
@@ -67,6 +73,7 @@ function AudioPlayer({ currentAudio, backgroundColorForContent }) {
           color: "#FFFFFF",
           border: `2px solid ${backgroundColorForContent}`,
           backgroundColor: `${backgroundColorForContent}`,
+          zIndex: 20,
         }}
         onClick={togglePlayPause}
       >
@@ -411,12 +418,12 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
   const [colorForContent, setColorForContent] = useState(
     "rgba(255, 255, 255, 0.5)"
   );
-
-  const [mute, setMute] = useState(true);
-
+  const swiperRef = useRef(null);
   const csvDataMaxIndex = csvData.length - 1;
 
   const [menuChecked, setMenuChecked] = useState(false);
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: theme.status.main,
@@ -522,13 +529,71 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
     }
   }, [imageColor]);
 
+  const handleSwiperInit = (swiper) => {
+    console.log("swiper.activeIndex=handleSwiperInit=", swiper.activeIndex);
+    swiperRef.current = swiper;
+  };
+
+  const onSlideChange = (swiper) => {
+    console.log("Slide index changed to: ", swiper.activeIndex);
+    setCurrentIndex(swiper.activeIndex);
+  };
+
+  useEffect(() => {
+    const importSwiper = async () => {
+      Swiper = (await import("swiper/react")).Swiper;
+      SwiperSlide = (await import("swiper/react")).SwiperSlide;
+      SwiperCore = (await import("swiper/core")).default;
+      Navigation = (await import("swiper/core")).Navigation;
+      Pagination = (await import("swiper/core")).Pagination;
+      Autoplay = (await import("swiper/core")).Autoplay;
+      EffectFade = (await import("swiper/core")).EffectFade;
+      // Install Swiper modules
+      SwiperCore.use([Navigation, Pagination, Autoplay]);
+      console.log("==", Swiper, SwiperSlide);
+      setIsLoaded(true);
+    };
+
+    importSwiper();
+  }, []);
+
+  const imageUrl = backgroundImageUrl;
+  const onColorExtracted = setImageColor;
+
+  const imgRef = useRef(null);
+  const colorThief = new ColorThief();
+
+  useEffect(() => {
+    function handleLoad() {
+      const color = colorThief.getPalette(imgRef.current);
+      // Now you can use the color for your text or stroke
+      onColorExtracted(color);
+    }
+
+    if (imgRef.current) {
+      if (imgRef.current.complete) {
+        handleLoad();
+      } else {
+        imgRef.current.addEventListener("load", handleLoad);
+      }
+    }
+
+    // 返回一个清理函数，在组件卸载时执行
+    return () => {
+      // 移除事件监听器
+      if (imgRef.current) {
+        imgRef.current.removeEventListener("load", handleLoad);
+      }
+    };
+  }, [imageUrl, onColorExtracted]);
+
   return (
     <div className={styles.main}>
       <Head>{newCSVItem && <title>{newCSVItem.en_source}</title>}</Head>
-      <FullScreenImage
+      {/* <FullScreenImage
         imageUrl={backgroundImageUrl}
         onColorExtracted={setImageColor}
-      />
+      /> */}
 
       <div
         style={{
@@ -565,24 +630,6 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
         csvDataMaxIndex={csvDataMaxIndex}
       />
 
-      {/* <Button
-        style={{
-          position: "fixed",
-          bottom: "10px",
-          left: "10px",
-
-          color: "#FFFFFF",
-          border: `2px solid ${backgroundColorForContent}`,
-          backgroundColor: `${backgroundColorForContent}`,
-        }}
-        onClick={() => {
-          setMute(!mute);
-        }}
-      >
-        {mute ? "解除静音" : "静音"}
-      </Button> */}
-
-      {console.log("newCSVItem", newCSVItem)}
       {newCSVItem && newCSVItem["av_dir"] && (
         <div>
           <AudioPlayer
@@ -600,6 +647,48 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
             }
           />
         </div>
+      )}
+
+      {isLoaded && (
+        <Swiper
+          style={{
+            height: "100vh",
+          }}
+          ref={swiperRef}
+          onSwiper={handleSwiperInit}
+          spaceBetween={0}
+          direction={"vertical"}
+          initialSlide={currentIndex}
+          onSlideChange={onSlideChange}
+        >
+          {csvData.map((newCSVItem, index) => {
+            return (
+              <SwiperSlide>
+                <img
+                  ref={imgRef}
+                  src={imageUrl}
+                  style={{ display: "none" }}
+                  crossOrigin="anonymous"
+                />
+                <div
+                  className={styles.fullScreenImage}
+                  style={{
+                    backgroundImage: `url('${imageUrl}')`,
+                    fontSize: 30,
+                  }}
+                >
+
+                </div>
+
+                <AvItem
+                      colorForContent={colorForContent}
+                      backgroundColorForContent={backgroundColorForContent}
+                      newCSVItem={newCSVItem}
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       )}
 
       {newCSVItem && (
