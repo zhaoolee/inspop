@@ -18,7 +18,6 @@ def insert_index_info_in_readme(insert_info):
     with open (os.path.join(os.getcwd(), "README.md"), 'w', encoding='utf-8') as f:
         f.write(new_readme_md_content)
 
-
     return True
 
 
@@ -32,7 +31,7 @@ def main():
     print(inspop_data_csv_data)
 
 
-    insert_info = '| en_content | cn_content | 发音 | \n | --- | --- | --- |\n'
+    insert_info = '| English | 中文 | 发音 | \n | --- | --- | --- |\n'
 
     av_info_json_path =  os.path.join(current_path, 'next-inspop', 'public', 'av-info.json')
     av_info_json = {}
