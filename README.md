@@ -13,7 +13,7 @@
 iOS App开发中 🚧 ...
 
 ---start---
-## 目录(目前收录71条，2023年10月10日更新，点击🔊收听原音) 
+## 目录(目前收录71条，2023年10月11日更新，点击🔊收听原音) 
 
 | English | 中文 | 发音 | 
  | --- | --- | --- |
@@ -22,7 +22,7 @@ iOS App开发中 🚧 ...
 | Before he built rockets for the Nazis, the idealistic Werner von Braun dreamed of space travel, he stargazed. Do you know what he said when the first V2 hit London? The rocket performed perfectly, it just landed on the wrong planet. See we all begin wide-eyed, pure science. And then the ego steps in, the obsession. And...you look up, you're a long way from shore. | 在为纳粹制造火箭以前，理想主义的维尔纳·冯·布劳恩，德国核物理学家和火箭专家，纳粹乙级战犯，幻想着航天旅行，他喜欢仰望星空，第一枚V2火箭击中伦敦后，你知道他说了什么吗？火箭运行得很完美，它只是落在了错误的星球上，我们开始时都很天真，纯粹的科学，然后自大心开始作祟  变得痴迷，抬头看时，已经偏离了很远。 | 建造中... | 
 | You know what my old man used to say to me? One of his favorite of many sayings, The early bird gets the worm, but the second mouse gets the cheese. | 你知道我老爸以前是怎么跟我说的吗？他最喜欢说的一句话是，早起的鸟儿有虫吃，但是第二只老鼠有奶酪吃。 | 建造中... | 
 | Einstein slept three hours a year. Look what he did | 爱因斯坦一年才睡三小时，看看他干了什么 | 建造中... | 
-| A famous man one said: We create our own demons. | 一位名人曾说，我们总会亲手种下自己的祸根。 | 建造中... | 
+| A famous man once said: We create our own demons. | 一位名人曾说，我们总会亲手种下自己的祸根。 | 建造中... | 
 | Gods, aliens, other dimensions. I'm just a man in a can. The only reason I haven't cracked up is probably because you moved in. | 神祇，外星人，其他维度。我只是个身处铁甲的凡人。我还没有崩溃，可能的唯一原因就是你的出现。 | [🔊](https://inspop.fangyuanxiaozhan.com/av/IronMan3GodsAliensOtherDimensions/Iron%20Man%203%20%282013%29%20%5Bimdbid-tt1300854%5D%20-%201080p_00_21_40_64-00_21_48_164.mp3) | 
 | So if I were to wrap this up tight with a bow or whatever, I guess I'd say my armor, it was never a distraction or a hobby, it was a cocoon. And now, I'm a changed man. You can take away my house, all my tricks and toys. One thing you can't take away...I am Iron Man. | 如果要我给这一切加个好结尾，我猜我会说我的战衣，从不是什么消遣或爱好，而是茧，现在我破茧成蝶了。你可以拿走我的房子、花招和玩具，有一样东西你永远拿不走，我就是钢铁侠。 | [🔊](https://inspop.fangyuanxiaozhan.com/av/IronMan3SoIfIWereTo/Iron%20Man%203%20%282013%29%20%5Bimdbid-tt1300854%5D%20-%201080p_01_58_59_438-01_59_39_121.mp3) | 
 | If it were any smarter, it would write a book. A book that would make Ulysses look like it was written in crayon. It would read it to you. | 它再聪明一点就会自己写书，绝对比小说《尤利西斯》更艰涩，而且还会自己读给你听。 | [🔊](https://inspop.fangyuanxiaozhan.com/av/IronMan2IfITWereAnySmarter/Iron%20Man%202%20%282010%29%20%5Bimdbid-tt1228705%5D%20-%201080p_01_12_05_500-01_12_13_549.mp3) | 
@@ -106,14 +106,15 @@ iOS App开发中 🚧 ...
 
 勾选右下角的选择框，可以使用更多功能，取消勾选，则自动隐藏，如果在菜单中了定时切换，则可以在菜单中看到定时切换的倒计时，刷新页面依然可以保持定时切换
 
-## 支持手动切换语录配图(语录配图与语录出自同一作品)
 
-![](./README/change-wallpaper.gif)
-
-
-## 支持手动切换上一句，下一句
+## 支持上下滚动切换语录
 
 ![](./README/change-line.gif)
+
+
+## 支持手动切换语录配图(点击页面左侧上一张，点击右侧下一张)
+
+![](./README/change-wallpaper.gif)
 
 
 
