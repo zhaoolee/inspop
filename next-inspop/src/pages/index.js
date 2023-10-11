@@ -19,15 +19,13 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 let Swiper;
 let SwiperSlide;
 let SwiperCore;
-let Pagination;
-let Autoplay;
-let EffectFade;
 
-function AudioPlayer({ currentAudio, backgroundColorForContent }) {
+function AudioPlayer({ currentAudio, backgroundColorForContent, cancalAutoRun }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef(null);
 
   const togglePlayPause = () => {
+    cancalAutoRun()
     if (playing) {
       audioRef.current.pause();
     } else {
@@ -67,7 +65,7 @@ function AudioPlayer({ currentAudio, backgroundColorForContent }) {
       <audio ref={audioRef} preload="auto" />
       <Button
         style={{
-          position: "fixed",
+          position: 'absolute',
           top: "10px",
           left: "10px",
           color: "#FFFFFF",
@@ -77,7 +75,7 @@ function AudioPlayer({ currentAudio, backgroundColorForContent }) {
         }}
         onClick={togglePlayPause}
       >
-        {playing ? "Pause" : "Play"}
+        {playing ? "🤫 Pause" : "🔊 Play"}
       </Button>
     </>
   );
@@ -102,56 +100,21 @@ function useInterval(callback, delay) {
   }, [delay]);
 }
 
-const FullScreenImage = ({ imageUrl, setImageColor }) => {
-  const imgRef = useRef(null);
-  const colorThief = new ColorThief();
-
-  useEffect(() => {
-    function handleLoad() {
-      const color = colorThief.getPalette(imgRef.current);
-      // Now you can use the color for your text or stroke
-      setImageColor(color);
-    }
-    if (imgRef.current.complete) {
-      handleLoad();
-    } else {
-      imgRef.current.addEventListener("load", handleLoad);
-    }
-
-    // 返回一个清理函数，在组件卸载时执行
-    return () => {
-      // 移除事件监听器
-      if (imgRef.current) {
-        imgRef.current.removeEventListener("load", handleLoad);
-      }
-    };
-  }, [imageUrl, setImageColor]);
-  return (
-    <>
-      <img
-        ref={imgRef}
-        src={imageUrl}
-        style={{ display: "none" }}
-        crossOrigin="anonymous"
-      />
-      <div
-        className={styles.fullScreenImage}
-        style={{ backgroundImage: `url('${imageUrl}')` }}
-      />
-    </>
-  );
-};
-
 const AvItem = (props) => {
-  const { csvItem, env, pageHeight } = props;
+  const { csvItem, env, pageHeight, currentIndex, csvItemIndex, 
+    backgroundColorForContent, setBackgroundColorForContent,
+    colorForContent, setColorForContent, cancalAutoRun, csvDataMaxIndex
+  } = props;
+  const [currentWallpapersInfoMaxIndex, setCurrentWallpapersInfoMaxIndex] =
+    useState(null);
 
-  console.log('==csvItem==', csvItem);
 
-  const [backgroundColorForContent, setBackgroundColorForContent] =
-  useState("rgba(0, 0, 0, 0.2)");
-  const [colorForContent, setColorForContent] = useState(
-    "rgba(255, 255, 255, 0.5)"
-  );
+
+
+  const [csvItemIndexRagne, setCsvItemIndexRagne] = useState([])
+
+
+
 
   const [imageColor, setImageColor] = useState(null);
 
@@ -160,23 +123,102 @@ const AvItem = (props) => {
   const imgRef = useRef(null);
   const colorThief = new ColorThief();
 
-  let currentBackGroundImageIndex = 0
+  const [currentBackGroundImageIndex, setCurrentBackGroundImageIndex] =
+    useState(null);
+
+  const nextBackGroundImage = () => {
+    console.log("=nextBackGroundImage=", currentBackGroundImageIndex)
+    if (currentBackGroundImageIndex !== null) {
+      if (currentBackGroundImageIndex + 1 <= currentWallpapersInfoMaxIndex) {
+        setCurrentBackGroundImageIndex(currentBackGroundImageIndex + 1);
+      } else {
+        setCurrentBackGroundImageIndex(0);
+      }
+
+      cancalAutoRun()
+    }
+
+  };
+
+  const previousBackGroundImage = () => {
+    console.log("=previousBackGroundImage=", currentBackGroundImageIndex)
+    if (currentBackGroundImageIndex !== null) {
+      if (currentBackGroundImageIndex - 1 >= 0) {
+        setCurrentBackGroundImageIndex(currentBackGroundImageIndex - 1);
+      } else {
+        setCurrentBackGroundImageIndex(currentWallpapersInfoMaxIndex);
+      }
+
+      cancalAutoRun()
+    }
+
+  };
 
   useEffect(() => {
-    const newBackgroundImage = csvItem["wallpapers_dir_info"][currentBackGroundImageIndex];
-    const tmpBackgroundImageUrl = `${env === "dev"
-        ? "/wallpapers/"
-        : "https://inspop.fangyuanxiaozhan.com/wallpapers/"
-      }` +
-      csvItem["wallpapers_dir"] +
-      "/" +
-      newBackgroundImage;
+    console.log('==csvItem==', csvItem, csvItem["wallpapers_dir_info"])
+    if (csvItem && csvItem["wallpapers_dir_info"]) {
+      const tmpCurrentBackGroundImageIndex = _.random(
+        0,
+        csvItem["wallpapers_dir_info"].length - 1
+      );
 
-    console.log('==tmpBackgroundImageUrl==', tmpBackgroundImageUrl)
+      setCurrentWallpapersInfoMaxIndex(csvItem["wallpapers_dir_info"].length - 1)
 
-    setBackgroundImageUrl(tmpBackgroundImageUrl);
-
+      setCurrentBackGroundImageIndex(tmpCurrentBackGroundImageIndex);
+    }
   }, [csvItem]);
+
+  useEffect(()=>{
+
+    const csvAllIndex = _.range(0, csvDataMaxIndex+1);
+
+    const getNumbers = (arr, i, n)=> {
+      let N = arr.length;
+      if (n > N) {
+          n = Math.floor(N / 2);
+      }
+      let result = [];
+  
+      for (let j = -n; j <= n; j++) {
+          let index = (i + j + N) % N;
+          result.push(arr[index]);
+      }
+  
+      return result;
+    }
+
+
+    const tmpCsvItemIndexRagne = getNumbers(csvAllIndex,  csvItemIndex, 2)
+
+
+    setCsvItemIndexRagne(tmpCsvItemIndexRagne)
+
+
+  }, [csvItemIndex])
+
+
+
+  useEffect(() => {
+
+    if(csvItemIndexRagne.indexOf(currentIndex) !== -1) {
+      if (currentBackGroundImageIndex !== null) {
+        const newBackgroundImage =
+          csvItem["wallpapers_dir_info"][currentBackGroundImageIndex];
+        const tmpBackgroundImageUrl =
+          `${
+            env === "dev"
+              ? "/wallpapers/"
+              : "https://inspop.fangyuanxiaozhan.com/wallpapers/"
+          }` +
+          csvItem["wallpapers_dir"] +
+          "/" +
+          newBackgroundImage;
+  
+        setBackgroundImageUrl(tmpBackgroundImageUrl);
+      }
+    }
+
+  }, [csvItem, currentBackGroundImageIndex, currentIndex]);
 
   useEffect(() => {
     if (imageColor) {
@@ -189,7 +231,6 @@ const AvItem = (props) => {
     }
   }, [imageColor]);
 
-
   useEffect(() => {
     function handleLoad() {
       const color = colorThief.getPalette(imgRef.current);
@@ -197,14 +238,13 @@ const AvItem = (props) => {
       setImageColor(color);
     }
 
-    if(imgRef && imgRef.current){
+    if (imgRef && imgRef.current) {
       if (imgRef.current.complete) {
         handleLoad();
       } else {
         imgRef.current.addEventListener("load", handleLoad);
       }
     }
-
 
     // 返回一个清理函数，在组件卸载时执行
     return () => {
@@ -216,79 +256,99 @@ const AvItem = (props) => {
   }, [backgroundImageUrl, setImageColor]);
 
   return (
-    <div className={styles.item} style={{
-      height: pageHeight
-    }}>
-      {/* <img
-        ref={imgRef}
-        src={backgroundImageUrl}
-        style={{ display: "none" }}
-        crossOrigin="anonymous"
-      />
-      <div
-        style={{
-          backgroundImage: `url('${backgroundImageUrl}')`,
-          fontSize: 30,
-          height: pageHeight,
-          position: 'fixed',
-          top: '0',
-          right: '0',
-          bottom: '0',
-          left: '0',
-           backgroundPosition: 'center', 
-           backgroundRepeat: 'no-repeat', 
-           backgroundSize: 'cover',
-          zIndex: 10
-        }}
-      >
-        <img src={backgroundImageUrl}></img>
-      </div> */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0, 
-        right: 0, 
-        bottom: 0,
-        zIndex: 10
-      }}>
-        <img style={{
-          width: "100%"
-        }} src={backgroundImageUrl}></img>
-      </div>
+    <div
+      className={styles.item}
+      style={{
+        height: pageHeight,
+        backgroundImage: `url('${backgroundImageUrl}')`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        position: "relative",
+      }}
+    >
+      {csvItem["av_dir"] && csvItemIndex === currentIndex && (
+        <AudioPlayer
+          key={csvItem["av_dir_info"]["audio"]}
+          currentIndex={currentIndex}
+          backgroundColorForContent={backgroundColorForContent}
+          cancalAutoRun={cancalAutoRun}
+          currentAudio={
+            `${
+              env === "dev" ? "/av/" : "https://inspop.fangyuanxiaozhan.com/av/"
+            }` +
+            csvItem["av_dir"] +
+            "/" +
+            csvItem["av_dir_info"]["audio"]
+          }
+        />
+      )}
 
       <div
-        id={colorForContent + backgroundColorForContent}
         style={{
-          width: "90%",
-          padding: "10px",
-          backdropFilter: "blur(2px)",
-          borderRadius: "10px",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          color: "rgba(255, 255, 255, 0.8)",
-          border: `2px solid ${backgroundColorForContent}`,
-          textShadow: `2px 2px 4px ${colorForContent}`,
+          position: "absolute",
+          height: "100vh",
+          display: "flex",
+          zIndex: 10,
         }}
       >
         <div
           style={{
-            textAlign: "left",
+            width: "50vw",
           }}
-        >
-          <p>{csvItem.en_content}</p>
-          <p>{csvItem.cn_content}</p>
-        </div>
-        <div
-          style={{
-            height: "16px",
-          }}
+          onClick={previousBackGroundImage}
         ></div>
+
         <div
           style={{
-            textAlign: "right",
+            width: "50vw",
+          }}
+          onClick={nextBackGroundImage}
+        ></div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          paddingTop: "20vh",
+          justifyContent: "center",
+          width: "100%",
+          zIndex: 20,
+        }}
+      >
+        <div
+          id={colorForContent + backgroundColorForContent}
+          style={{
+            width: "90%",
+            padding: "10px",
+            backdropFilter: "blur(2px)",
+            borderRadius: "10px",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "rgba(255, 255, 255, 0.8)",
+            border: `2px solid ${backgroundColorForContent}`,
+            textShadow: `2px 2px 4px ${colorForContent}`,
           }}
         >
-          <p>{csvItem.en_source}</p>
-          <p>{csvItem.cn_source}</p>
+          <div
+            style={{
+              textAlign: "left",
+            }}
+          >
+            <p>{csvItem.en_content}</p>
+            <p>{csvItem.cn_content}</p>
+          </div>
+          <div
+            style={{
+              height: "16px",
+            }}
+          ></div>
+          <div
+            style={{
+              textAlign: "right",
+            }}
+          >
+            <p>{csvItem.en_source}</p>
+            <p>{csvItem.cn_source}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -298,20 +358,13 @@ const AvItem = (props) => {
 const InsPopMenu = (props) => {
   const {
     backgroundColorForContent,
-    nextCSVItem,
     intervalTime,
     countDown,
     setIntervalTime,
-    currentBackGroundImageIndex,
-    currentWallpapersInfoMaxIndex,
-    setCurrentBackGroundImageIndex,
     setCountDown,
-    currentIndex,
-    setCurrentIndex,
     colorForContent,
     menuChecked,
     handleMenuCheckedChange,
-    csvDataMaxIndex,
   } = props;
 
   const intervalValues = [0, 5, 10, 20, 30, 60, 300];
@@ -326,6 +379,8 @@ const InsPopMenu = (props) => {
     "Every 5 minutes",
   ];
 
+
+
   const handleIntervalChange = (e) => {
     const newTime = parseInt(e.target.value);
     localStorage.setItem("intervalTime", newTime);
@@ -333,37 +388,6 @@ const InsPopMenu = (props) => {
       setIntervalTime(newTime);
       setCountDown(newTime * 1000); // 立即重置倒计时
     }
-  };
-
-  const nextBackGroundImage = () => {
-    if (currentBackGroundImageIndex !== null) {
-      if (currentBackGroundImageIndex + 1 <= currentWallpapersInfoMaxIndex) {
-        setCurrentBackGroundImageIndex(currentBackGroundImageIndex + 1);
-      } else {
-        setCurrentBackGroundImageIndex(0);
-      }
-    }
-    setCountDown(intervalTime * 1000);
-  };
-
-  const previousBackGroundImage = () => {
-    if (currentBackGroundImageIndex !== null) {
-      if (currentBackGroundImageIndex - 1 >= 0) {
-        setCurrentBackGroundImageIndex(currentBackGroundImageIndex - 1);
-      } else {
-        setCurrentBackGroundImageIndex(currentWallpapersInfoMaxIndex);
-      }
-    }
-    setCountDown(intervalTime * 1000);
-  };
-
-  const previousCSVItem = () => {
-    if (currentIndex - 1 >= 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else {
-      setCurrentIndex(csvDataMaxIndex);
-    }
-    setCountDown(intervalTime * 1000);
   };
 
   useEffect(() => {
@@ -399,7 +423,6 @@ const InsPopMenu = (props) => {
       >
         <div
           style={{
-            // position: "fixed",
             height: "200px",
             width: "100vw",
             bottom: "10px",
@@ -410,61 +433,6 @@ const InsPopMenu = (props) => {
             backgroundColor: `${backgroundColorForContent}`,
           }}
         >
-          <ButtonGroup variant="outlined">
-            <Button
-              style={{
-                color: "#FFFFFF",
-                border: `2px solid ${backgroundColorForContent}`,
-                backgroundColor: `${backgroundColorForContent}`,
-              }}
-              startIcon={<ArrowBackIcon />}
-              onClick={previousBackGroundImage}
-            >
-              WallPaper
-            </Button>
-            <Button
-              style={{
-                color: "#FFFFFF",
-                border: `2px solid ${backgroundColorForContent}`,
-                backgroundColor: `${backgroundColorForContent}`,
-              }}
-              endIcon={<ArrowForwardIcon />}
-              onClick={nextBackGroundImage}
-            >
-              WallPaper
-            </Button>
-          </ButtonGroup>
-
-          <div
-            style={{
-              height: "10px",
-            }}
-          ></div>
-
-          <ButtonGroup variant="outlined">
-            <Button
-              style={{
-                color: "#FFFFFF",
-                border: `2px solid ${backgroundColorForContent}`,
-                backgroundColor: `${backgroundColorForContent}`,
-              }}
-              startIcon={<ArrowBackIcon />}
-              onClick={previousCSVItem}
-            >
-              Line
-            </Button>
-            <Button
-              style={{
-                color: "#FFFFFF",
-                border: `2px solid ${backgroundColorForContent}`,
-                backgroundColor: `${backgroundColorForContent}`,
-              }}
-              endIcon={<ArrowForwardIcon />}
-              onClick={nextCSVItem}
-            >
-              Line
-            </Button>
-          </ButtonGroup>
 
           <div
             style={{
@@ -505,7 +473,7 @@ const InsPopMenu = (props) => {
                 textShadow: `2px 2px 4px ${colorForContent}`,
               }}
             >
-              Switch after {countDown / 1000}{" "}
+              🚀 Switch after {countDown / 1000}{" "}
               {countDown > 1000 ? "seconds" : "second"}
             </p>
           )}
@@ -515,20 +483,26 @@ const InsPopMenu = (props) => {
   );
 };
 
-export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
-  // console.log("avInfoJson==", avInfoJson);
-  // let localIntervalTime = 0;
-  // const [intervalTime, setIntervalTime] = useState(localIntervalTime);
-  // const [countDown, setCountDown] = useState(intervalTime * 1000);
+export default function Home({ csvData, env }) {
+
+  let localIntervalTime = 0;
+  const [intervalTime, setIntervalTime] = useState(localIntervalTime);
+  const [countDown, setCountDown] = useState(intervalTime * 1000);
 
   const swiperRef = useRef(null);
   const csvDataMaxIndex = csvData.length - 1;
 
   const [pageHeight, setPageHeight] = useState(0);
 
-  // const [menuChecked, setMenuChecked] = useState(false);
+  const [menuChecked, setMenuChecked] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(false);
+
+      const [backgroundColorForContent, setBackgroundColorForContent] =
+      useState("rgba(0, 0, 0, 0.2)");
+    const [colorForContent, setColorForContent] = useState(
+      "rgba(255, 255, 255, 0.5)"
+    );
 
   useEffect(() => {
     setPageHeight(window.innerHeight);
@@ -537,113 +511,99 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
       setPageHeight(window.innerHeight);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  // const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
-  //   color: theme.status.main,
-  //   "&.Mui-checked": {
-  //     color: theme.status.main,
-  //   },
-  // }));
+  const cancalAutoRun = () =>{
+    setIntervalTime(0)
+    localStorage.setItem("intervalTime", 0);
+  }
 
-  // const theme = createTheme({
-  //   status: {
-  //     main: `${colorForContent}`,
-  //   },
-  // });
+  const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
+    color: theme.status.main,
+    "&.Mui-checked": {
+      color: theme.status.main,
+    },
+  }));
 
-  // const [currentWallpapersInfoMaxIndex, setCurrentWallpapersInfoMaxIndex] =
-  //   useState(null);
-
-
+  const theme = createTheme({
+    status: {
+      main: `${colorForContent}`,
+    },
+  });
 
   const [currentIndex, setCurrentIndex] = useState(
     _.random(0, csvDataMaxIndex)
   );
 
-  // const [currentBackGroundImageIndex, setCurrentBackGroundImageIndex] =
-  //   useState(0);
 
-  // useInterval(
-  //   () => {
-  //     nextCSVItem();
-  //     setCountDown(intervalTime * 1000);
-  //   },
-  //   intervalTime > 0 ? intervalTime * 1000 : null
-  // );
-
-  // useInterval(() => {
-  //   setCountDown((countDown) => {
-  //     const newCountDown = countDown - 1000;
-  //     return newCountDown > 0 ? newCountDown : 0;
-  //   });
-  // }, 1000);
-
-  // useEffect(() => {
-  //   setCountDown(intervalTime * 1000);
-  // }, [intervalTime]);
-
-
-  // const handleMenuCheckedChange = () => {
-  //   setMenuChecked(!menuChecked);
-  // };
-
-
-
-  // const nextCSVItem = () => {
-  //   if (currentIndex + 1 <= csvDataMaxIndex) {
-  //     setCurrentIndex(currentIndex + 1);
-  //   } else {
-  //     setCurrentIndex(0);
-  //   }
-  //   setCountDown(intervalTime * 1000);
-  // };
+  const handleMenuCheckedChange = () => {
+    setMenuChecked(!menuChecked);
+  };
 
 
 
   const handleSwiperInit = (swiper) => {
     console.log("swiper.activeIndex=handleSwiperInit=", swiper.activeIndex);
     swiperRef.current = swiper;
+
+
+    swiper.on('transitionEnd', function() {
+      setCurrentIndex(swiper.realIndex);
+    });
+
   };
 
-  const onSlideChange = (swiper) => {
-    console.log("Slide index changed to: ", swiper.activeIndex);
-    setCurrentIndex(swiper.activeIndex);
-  };
+  const toSlideNext = ()=>{
+
+    swiperRef.current.slideNext();
+  }
+
 
   useEffect(() => {
     const importSwiper = async () => {
       Swiper = (await import("swiper/react")).Swiper;
       SwiperSlide = (await import("swiper/react")).SwiperSlide;
       SwiperCore = (await import("swiper/core")).default;
-      Navigation = (await import("swiper/core")).Navigation;
-      Pagination = (await import("swiper/core")).Pagination;
-      Autoplay = (await import("swiper/core")).Autoplay;
-      EffectFade = (await import("swiper/core")).EffectFade;
+
+      const { Navigation, Pagination, Autoplay, EffectFade, Mousewheel } =
+        await import("swiper/modules");
+
       // Install Swiper modules
-      SwiperCore.use([Navigation, Pagination, Autoplay]);
-      console.log("==", Swiper, SwiperSlide);
+      SwiperCore.use([Navigation, Pagination, Autoplay, Mousewheel]);
       setIsLoaded(true);
     };
 
     importSwiper();
   }, []);
 
+  useInterval(
+    () => {
+      // nextCSVItem();
+      toSlideNext();
+      setCountDown(intervalTime * 1000);
+    },
+    intervalTime > 0 ? intervalTime * 1000 : null
+  );
 
+  useInterval(() => {
+    setCountDown((countDown) => {
+      const newCountDown = countDown - 1000;
+      return newCountDown > 0 ? newCountDown : 0;
+    });
+  }, 1000);
+
+  useEffect(() => {
+    setCountDown(intervalTime * 1000);
+  }, [intervalTime]);
 
   return (
     <div className={styles.main}>
-      {/* <Head>{newCSVItem && <title>{newCSVItem.en_source}</title>}</Head> */}
-      {/* <FullScreenImage
-        imageUrl={backgroundImageUrl}
-        setImageColor={setImageColor}
-      /> */}
-
-      {/* <div
+      <Head>{csvData[currentIndex] && <title>{csvData[currentIndex].en_source}</title>}</Head>
+      <div
         style={{
           position: "fixed",
           right: "10px",
@@ -651,71 +611,63 @@ export default function Home({ csvData, wallpapersInfoJson, avInfoJson, env }) {
           zIndex: 50,
         }}
       >
+        <span>{countDown > 0 && "🚀"}</span>
         <ThemeProvider theme={theme}>
+          <span style={{
+            cursor: 'pointer'
+          }} onClick={handleMenuCheckedChange}>🌈</span>
           <CustomCheckbox
             key={colorForContent}
             checked={menuChecked}
             onChange={handleMenuCheckedChange}
           />
         </ThemeProvider>
-      </div> */}
+      </div>
 
-      {/* <InsPopMenu
+      <InsPopMenu
+        handleMenuCheckedChange={handleMenuCheckedChange}
         menuChecked={menuChecked}
+        colorForContent={colorForContent}
         backgroundColorForContent={backgroundColorForContent}
-        nextCSVItem={nextCSVItem}
         intervalTime={intervalTime}
         countDown={countDown}
         setIntervalTime={setIntervalTime}
-        currentBackGroundImageIndex={currentBackGroundImageIndex}
-        currentWallpapersInfoMaxIndex={currentWallpapersInfoMaxIndex}
-        setCurrentBackGroundImageIndex={setCurrentBackGroundImageIndex}
         setCountDown={setCountDown}
-        currentIndex={currentIndex}
-        setCurrentIndex={setCurrentIndex}
-        colorForContent={colorForContent}
-        handleMenuCheckedChange={handleMenuCheckedChange}
-        csvDataMaxIndex={csvDataMaxIndex}
-      /> */}
 
-      {/* {newCSVItem && newCSVItem["av_dir"] && (
-        <div>
-          <AudioPlayer
-            key={avInfoJson[newCSVItem["av_dir"]]["audio"]}
-            backgroundColorForContent={backgroundColorForContent}
-            currentAudio={
-              `${env === "dev"
-                ? "/av/"
-                : "https://inspop.fangyuanxiaozhan.com/av/"
-              }` +
-              newCSVItem["av_dir"] +
-              "/" +
-              avInfoJson[newCSVItem["av_dir"]]["audio"]
-            }
-          />
-        </div>
-      )} */}
+      />
 
       {isLoaded && (
         <Swiper
           ref={swiperRef}
           onSwiper={handleSwiperInit}
           spaceBetween={0}
+          slidesPerView={1}
           direction={"vertical"}
           initialSlide={currentIndex}
-          onSlideChange={onSlideChange}
-          style={{  height: pageHeight }}
+          // onSlideChange={onSlideChange}
+          realIndexChange={(e)=>{
+            console.log('==realIndexChange==', e)
+          }}
+          style={{ height: pageHeight }}
+          loop={true}
+          mousewheel={true}
         >
-          {csvData.map((csvItem, index) => {
+          {csvData.map((csvItem, csvItemIndex) => {
             return (
-              <SwiperSlide
-              style={{  height: pageHeight }}
-              >
+              <SwiperSlide key={csvItem.cn_content}>
                 <AvItem
                   key={csvItem.en_content}
                   csvItem={csvItem}
                   pageHeight={pageHeight}
+                  currentIndex={currentIndex}
+                  csvItemIndex={csvItemIndex}
                   env={env}
+                  csvDataMaxIndex = {csvDataMaxIndex}
+                  cancalAutoRun={cancalAutoRun}
+                  backgroundColorForContent={backgroundColorForContent}
+                  setBackgroundColorForContent={setBackgroundColorForContent}
+                  colorForContent={colorForContent}
+                  setColorForContent={setColorForContent}
                 />
               </SwiperSlide>
             );
@@ -759,10 +711,12 @@ export async function getStaticProps() {
 
   for (let m = 0; m < sourceCsvData.length; m++) {
     if (sourceCsvData[m] && sourceCsvData[m]["wallpapers_dir"]) {
-      sourceCsvData[m]["wallpapers_dir_info"] = wallpapersInfoJson[sourceCsvData[m]["wallpapers_dir"]]
+      sourceCsvData[m]["wallpapers_dir_info"] =
+        wallpapersInfoJson[sourceCsvData[m]["wallpapers_dir"]];
 
-      if(sourceCsvData[m]["av_dir"]){
-        sourceCsvData[m]["av_dir_info"] = avInfoJson[sourceCsvData[m]["av_dir"]]
+      if (sourceCsvData[m]["av_dir"]) {
+        sourceCsvData[m]["av_dir_info"] =
+          avInfoJson[sourceCsvData[m]["av_dir"]];
       }
 
       csvData.push(sourceCsvData[m]);
@@ -784,8 +738,6 @@ export async function getStaticProps() {
   return {
     props: {
       csvData: csvData,
-      // wallpapersInfoJson: wallpapersInfoJson,
-      // avInfoJson: avInfoJson,
       env: env,
     },
   };
