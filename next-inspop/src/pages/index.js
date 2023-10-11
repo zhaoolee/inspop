@@ -6,9 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/index.module.css";
 import ColorThief from "../../node_modules/colorthief/dist/color-thief.mjs";
 import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
@@ -611,7 +608,7 @@ export default function Home({ csvData, env }) {
           zIndex: 50,
         }}
       >
-        <span>{countDown > 0 && "🚀"}</span>
+        <span>{intervalTime > 0 && "🚀"}</span>
         <ThemeProvider theme={theme}>
           <span style={{
             cursor: 'pointer'
