@@ -109,18 +109,22 @@ iOS App开发中 🚧 ...
 
 ## 支持上下滚动切换语录
 
-![](./README/change-line.gif)
+![](./README/change-line002.gif)
 
 
 ## 支持手动切换语录配图(点击页面左侧上一张，点击右侧下一张)
 
-![](./README/change-wallpaper.gif)
+![](./README/change-wallpaper002.gif)
 
 
 
-## 支持自动播放，支持选择自动播放的间隔时间(gif图三倍速)
+## 支持自动播放，支持选择自动播放的间隔时间
 
-![](./README/auto.gif)
+
+![](./README/auto002.gif)
+
+
+自动播放类似于屏幕保护程序，自动播放期间右下角有🚀标识，如果手动切换壁纸，或进行语音播放，则自动停止自动播放，🚀符号消失
 
 
 ## 支持播放原音(资源补充中)
@@ -129,9 +133,7 @@ iOS App开发中 🚧 ...
 
 zhaoolee自用快剪脚本 [get_voice_video.sh](https://github.com/zhaoolee/inspop/blob/main/get_voice_video.sh)
 
-## 本项目开放数据源
-
-相关数据源位置
+## 本项目数据源
 
 https://github.com/zhaoolee/inspop/tree/main/next-inspop/public
 
