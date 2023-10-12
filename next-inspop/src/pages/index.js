@@ -108,9 +108,9 @@ const AvItem = (props) => {
 
 
 
+  const [currentBackGroundImageIndexRagne, setCurrentBackGroundImageIndexRagne] = useState([])
+
   const [csvItemIndexRagne, setCsvItemIndexRagne] = useState([])
-
-
 
 
   const [imageColor, setImageColor] = useState(null);
@@ -165,25 +165,24 @@ const AvItem = (props) => {
     }
   }, [csvItem]);
 
+  const getNumbers = (arr, i, n)=> {
+    let N = arr.length;
+    if (n > N) {
+        n = Math.floor(N / 2);
+    }
+    let result = [];
+
+    for (let j = -n; j <= n; j++) {
+        let index = (i + j + N) % N;
+        result.push(arr[index]);
+    }
+
+    return result;
+  }
+
   useEffect(()=>{
 
     const csvAllIndex = _.range(0, csvDataMaxIndex+1);
-
-    const getNumbers = (arr, i, n)=> {
-      let N = arr.length;
-      if (n > N) {
-          n = Math.floor(N / 2);
-      }
-      let result = [];
-  
-      for (let j = -n; j <= n; j++) {
-          let index = (i + j + N) % N;
-          result.push(arr[index]);
-      }
-  
-      return result;
-    }
-
 
     const tmpCsvItemIndexRagne = getNumbers(csvAllIndex,  csvItemIndex, 2)
 
@@ -192,6 +191,52 @@ const AvItem = (props) => {
 
 
   }, [csvItemIndex])
+
+  useEffect(()=>{
+
+    if(currentWallpapersInfoMaxIndex !== null){
+
+      const currentWallpapersInfoAllIndex = _.range(0, currentWallpapersInfoMaxIndex+1);
+
+      const tmpCurrentBackGroundImageIndexRange = getNumbers(currentWallpapersInfoAllIndex,  currentBackGroundImageIndex, 1)
+  
+      setCurrentBackGroundImageIndexRagne(tmpCurrentBackGroundImageIndexRange)
+
+      const imageUrls = [];
+
+
+      for(let i = 0 ; i < tmpCurrentBackGroundImageIndexRange.length; i++) {
+
+        const newBackgroundImage = csvItem["wallpapers_dir_info"][i];
+        const tmpBackgroundImageUrl =
+        `${
+          env === "dev"
+            ? "/wallpapers/"
+            : "https://inspop.fangyuanxiaozhan.com/wallpapers/"
+        }` +
+        csvItem["wallpapers_dir"] +
+        "/" +
+        newBackgroundImage;
+        imageUrls.push(tmpBackgroundImageUrl)
+      }
+
+      console.log('==imageUrls==', imageUrls)
+
+      const loadImages = imageUrls.map(url => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = url;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      });
+  
+      Promise.all(loadImages)
+        .then(() => {console.log('--load--', loadImages)})
+        .catch(err => console.log('Some images failed to load', err));
+    }
+
+  }, [currentBackGroundImageIndex])
 
 
 
