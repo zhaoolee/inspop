@@ -553,11 +553,11 @@ export default function Home({ csvData, env }) {
       SwiperSlide = (await import("swiper/react")).SwiperSlide;
       SwiperCore = (await import("swiper/core")).default;
 
-      const { Navigation, Pagination, Autoplay, EffectFade, Mousewheel } =
+      const { Navigation, Pagination, Autoplay, EffectFade, Mousewheel, Keyboard } =
         await import("swiper/modules");
 
       // Install Swiper modules
-      SwiperCore.use([Navigation, Pagination, Autoplay, Mousewheel]);
+      SwiperCore.use([Navigation, Pagination, Autoplay, Mousewheel, Keyboard]);
       setIsLoaded(true);
     };
 
@@ -628,13 +628,13 @@ export default function Home({ csvData, env }) {
           slidesPerView={1}
           direction={"vertical"}
           initialSlide={currentIndex}
-          // onSlideChange={onSlideChange}
           realIndexChange={(e)=>{
             console.log('==realIndexChange==', e)
           }}
           style={{ height: pageHeight }}
           loop={true}
-          mousewheel={true}
+          mousewheel={{enabled: true, forceToAxis: true, thresholdTime: 1000}}
+          keyboard={{ enabled: true }}
         >
           {csvData.map((csvItem, csvItemIndex) => {
             return (
