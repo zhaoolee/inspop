@@ -9,10 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "web:export": "node auto-build-wallpaper-dir-info.js && next build && next export",
-    "extensions:export": "node auto-build-wallpaper-dir-info.js && next build && next export && mv out/_next out/next && sed -i '' -e 's/\\/_next/\\.\\/next/g' out/**.html && sed -i '' -e 's/\\/_next/\\/next/g' out/next/static/chunks/**.js &&  mv out/index.html ../extension && rsync -va --delete-after out/next/ ../extension/next/ && rm -rf out && rsync -va --delete-after public/images ../extension/",
-    "send": "rsync -avz --delete ./out/ root@fangyuanxiaozhan.com:/usr/share/nginx/inspop.fangyuanxiaozhan.com/",
-    "export": "npm run extensions:export && 7z a ../inspop-extension-release.zip ../extension/* && npm run web:export"
+    "export": "node auto-build-wallpaper-dir-info.js && next build && next export && mv out/_next out/next && sed -i '' -e 's/\\/_next/\\.\\/next/g' out/**.html && sed -i '' -e 's/\\/_next/\\/next/g' out/next/static/chunks/**.js &&  mv out/index.html ../extension && rsync -va --delete-after out/next/ ../extension/next/ && rm -rf out && rsync -va --delete-after public/images ../extension/ && 7z a ../inspop-extension-release.zip ../extension/* && node auto-build-wallpaper-dir-info.js && next build && next export",
+    "web:publish": "rsync -avz --delete ./out/ root@fangyuanxiaozhan.com:/usr/share/nginx/inspop.fangyuanxiaozhan.com/",
+    "push": "git add . && git commit -m 'update' && git push"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
