@@ -5,78 +5,20 @@ import _ from "lodash";
 import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/index.module.css";
 import ColorThief from "../../node_modules/colorthief/dist/color-thief.mjs";
-import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import Head from "next/head";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import AudioPlayer from '../components/AudioPlayer';
+
 
 let Swiper;
 let SwiperSlide;
 let SwiperCore;
 
-function AudioPlayer({ currentAudio, backgroundColorForContent, cancalAutoRun }) {
-  const [playing, setPlaying] = useState(false);
-  const audioRef = useRef(null);
 
-  const togglePlayPause = () => {
-    cancalAutoRun()
-    if (playing) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-    setPlaying(!playing);
-  };
-
-  useEffect(() => {
-    // 当音频播放完成时，将playing设置为false
-    const handleAudioEnd = () => {
-      setPlaying(false);
-    };
-
-    if (audioRef.current) {
-      audioRef.current.addEventListener("ended", handleAudioEnd);
-    }
-
-    // 在组件卸载时移除事件监听器，并停止音频播放
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("ended", handleAudioEnd);
-        audioRef.current.pause();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.src = currentAudio;
-      setPlaying(false);
-    }
-  }, [currentAudio]);
-
-  return (
-    <>
-      <audio ref={audioRef} preload="auto" />
-      <Button
-        style={{
-          position: 'absolute',
-          top: "10px",
-          left: "10px",
-          color: "#FFFFFF",
-          border: `2px solid ${backgroundColorForContent}`,
-          backgroundColor: `${backgroundColorForContent}`,
-          zIndex: 20,
-        }}
-        onClick={togglePlayPause}
-      >
-        {playing ? "🤫 Pause" : "🔊 Play"}
-      </Button>
-    </>
-  );
-}
 
 function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -611,11 +553,11 @@ export default function Home({ csvData, env }) {
       SwiperSlide = (await import("swiper/react")).SwiperSlide;
       SwiperCore = (await import("swiper/core")).default;
 
-      const { Navigation, Pagination, Autoplay, EffectFade, Mousewheel } =
+      const { Navigation, Pagination, Autoplay, EffectFade, Mousewheel, Keyboard } =
         await import("swiper/modules");
 
       // Install Swiper modules
-      SwiperCore.use([Navigation, Pagination, Autoplay, Mousewheel]);
+      SwiperCore.use([Navigation, Pagination, Autoplay, Mousewheel, Keyboard]);
       setIsLoaded(true);
     };
 
@@ -686,13 +628,13 @@ export default function Home({ csvData, env }) {
           slidesPerView={1}
           direction={"vertical"}
           initialSlide={currentIndex}
-          // onSlideChange={onSlideChange}
           realIndexChange={(e)=>{
             console.log('==realIndexChange==', e)
           }}
           style={{ height: pageHeight }}
           loop={true}
-          mousewheel={true}
+          mousewheel={{enabled: true, forceToAxis: true, thresholdTime: 1000}}
+          keyboard={{ enabled: true }}
         >
           {csvData.map((csvItem, csvItemIndex) => {
             return (

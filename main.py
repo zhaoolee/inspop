@@ -50,7 +50,15 @@ def main():
 
         if(len(https_audio_info) > 0):
             insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
-        else:
+    for index, row in inspop_data_csv_data.iloc[::-1].iterrows():
+        https_audio_info =  ''
+        if(pd.isnull(row.av_dir) == False):
+            audio_name = av_info_json[row.av_dir]['audio']
+            https_audio_info = 'https://inspop.fangyuanxiaozhan.com/av/' + row.av_dir + '/' + audio_name
+            https_audio_info = quote(https_audio_info, safe=':/') 
+            print('https_audio_info==', https_audio_info)        
+        
+        if(len(https_audio_info) == 0):
             insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | 建造中... | ' + '\n'
 
     insert_info = "---start---\n## 目录(" + f"目前收录{len(inspop_data_csv_data)}条，" + time.strftime('%Y年%m月%d日') + "更新，点击🔊收听原音) \n\n" + insert_info + "\n" + "---end---"
