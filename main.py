@@ -31,7 +31,7 @@ def main():
     print(inspop_data_csv_data)
 
 
-    insert_info = '| GIF(点击图片跳转到原视频) | English | 中文 | 发音 | \n| :---: | :--- | :--- | :---: |\n'
+    insert_info = '| ClickOnGifToJumpToOriginalVideo | English | 中文 | 发音 | \n| :---: | :--- | :--- | :---: |\n'
 
     av_info_json_path =  os.path.join(current_path, 'next-inspop', 'public', 'av-info.json')
     av_info_json = {}
