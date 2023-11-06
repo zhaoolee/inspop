@@ -31,7 +31,7 @@ def main():
     print(inspop_data_csv_data)
 
 
-    insert_info = '| GIF | English | 中文 | 发音 | \n| :---: | :---: | :---: | :---: |\n'
+    insert_info = '| GIF | English | 中文 | 发音 | \n| :---: | :--- | :--- | :---: |\n'
 
     av_info_json_path =  os.path.join(current_path, 'next-inspop', 'public', 'av-info.json')
     av_info_json = {}
@@ -57,7 +57,7 @@ def main():
             print('https_video_info==', https_video_info)
 
         if(len(https_audio_info) > 0):
-            insert_info = insert_info + "| " + f"<a href='{https_video_info}'><img height='100px' style='height:100px;' src='{https_gif_info}' /></a>" + " | " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
+            insert_info = insert_info + "| " + f"<a href='{https_video_info}' style='width:200px;display:inline-block;'><img height='100px'  style='height:100px;' src='{https_gif_info}' /></a>" + " | " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
     for index, row in inspop_data_csv_data.iloc[::-1].iterrows():
         https_audio_info =  ''
         if(pd.isnull(row.av_dir) == False):
