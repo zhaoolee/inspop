@@ -31,7 +31,7 @@ def main():
     print(inspop_data_csv_data)
 
 
-    insert_info = '| English | 中文 | 发音 | \n | --- | --- | --- |\n'
+    insert_info = '| GIF | English | 中文 | 发音 | \n| :---: | :---: | :---: | :---: |\n'
 
     av_info_json_path =  os.path.join(current_path, 'next-inspop', 'public', 'av-info.json')
     av_info_json = {}
@@ -44,12 +44,20 @@ def main():
         https_audio_info =  ''
         if(pd.isnull(row.av_dir) == False):
             audio_name = av_info_json[row.av_dir]['audio']
+            gif_name = av_info_json[row.av_dir]['gif']
+            video_name = av_info_json[row.av_dir]['video']
             https_audio_info = 'https://inspop.fangyuanxiaozhan.com/av/' + row.av_dir + '/' + audio_name
-            https_audio_info = quote(https_audio_info, safe=':/') 
+            https_audio_info = quote(https_audio_info, safe=':/')
             print('https_audio_info==', https_audio_info)
+            https_gif_info = 'https://inspop.fangyuanxiaozhan.com/av/' + row.av_dir + '/' + gif_name
+            https_gif_info = quote(https_gif_info, safe=':/')
+            print('https_gif_info==', https_gif_info)
+            https_video_info = 'https://inspop.fangyuanxiaozhan.com/av/' + row.av_dir + '/' + video_name
+            https_video_info = quote(https_video_info, safe=':/') 
+            print('https_video_info==', https_video_info)
 
         if(len(https_audio_info) > 0):
-            insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
+            insert_info = insert_info + "| " + f"<a href='{https_video_info}'><img height='100px' style='height:100px;' src='{https_gif_info}' /></a>" + " | " + row.en_content + ' | ' + row.cn_content + ' | [🔊](' + https_audio_info +') | ' + '\n'
     for index, row in inspop_data_csv_data.iloc[::-1].iterrows():
         https_audio_info =  ''
         if(pd.isnull(row.av_dir) == False):
@@ -59,7 +67,7 @@ def main():
             print('https_audio_info==', https_audio_info)        
         
         if(len(https_audio_info) == 0):
-            insert_info = insert_info + "| " + row.en_content + ' | ' + row.cn_content + ' | 建造中... | ' + '\n'
+            insert_info = insert_info +  "|  |" + row.en_content + ' | ' + row.cn_content + ' | 建造中... | ' + '\n'
 
     insert_info = "---start---\n## 目录(" + f"目前收录{len(inspop_data_csv_data)}条，" + time.strftime('%Y年%m月%d日') + "更新，点击🔊收听原音) \n\n" + insert_info + "\n" + "---end---"
     insert_index_info_in_readme(insert_info)

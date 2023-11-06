@@ -75,6 +75,9 @@ function main() {
           if(current_av_dir_files[n].endsWith('.mp4')){
             new_current_av_dir_files['video'] = current_av_dir_files[n]
           }
+          if(current_av_dir_files[n].endsWith('.gif')){
+            new_current_av_dir_files['gif'] = current_av_dir_files[n]
+          }
             
         }
       }
