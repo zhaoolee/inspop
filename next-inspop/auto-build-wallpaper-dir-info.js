@@ -105,6 +105,22 @@ function main() {
     "av-info.json"
   );
 
+  // Older clips keep mp3/mp4 out of git. A checkout that only has the gif
+  // must not erase those names, or the next export would publish a catalog
+  // whose audio files no longer match the server.
+  const previousAvInfo = fs.existsSync(avInfoJsonPath)
+    ? fs.readJsonSync(avInfoJsonPath)
+    : {};
+  for (const dirName of Object.keys(av_dir_json)) {
+    const previous = previousAvInfo[dirName] || {};
+    const current = av_dir_json[dirName];
+    for (const key of ["gif", "audio", "video"]) {
+      if (!current[key] && previous[key]) {
+        current[key] = previous[key];
+      }
+    }
+  }
+
   // 将JSON数据写入文件
   fs.writeJsonSync(avInfoJsonPath, av_dir_json, { spaces: 2 });
   
